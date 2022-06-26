@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TransactionListView: View {
+    @ObservedObject var transactionItems: TransactionModelItem
     @Binding var transactions: [TransactionModel]
     let categories: [TransactionModel.Category] = TransactionModel.Category.allCases
     @State var selectedCategory: TransactionModel.Category = .defaultCase
@@ -26,6 +27,7 @@ struct TransactionListView: View {
         let pinned = filteredTransactions.filter{ $0.isPinned }
         let amounts = pinned.map{ $0.amount }
         let total = amounts.reduce(0, +)
+        transactionItems.forceUpdateModel.toggle()
         pinnedTotal = total
     }
     
@@ -111,8 +113,7 @@ struct SummaryView: View {
                 
                 Spacer()
                 
-                let readableTotal = String(format: "$%.02f", total)
-                Text(readableTotal)
+                Text(total.readableSum)
                     .bold()
                     .foregroundColor(.secondary)
             }

@@ -15,14 +15,14 @@ struct TechChallengeApp: App {
         WindowGroup {
             TabView {
                 NavigationView {
-                    TransactionListView(transactions: $transactionsItem.transactions)
+                    TransactionListView(transactionItems: transactionsItem, transactions: $transactionsItem.transactions)
                 }
                 .tabItem {
                     Label("Transactions", systemImage: "list.bullet")
                 }
                 
                 NavigationView {
-                    InsightsView()
+                    InsightsView(transactionItems: transactionsItem)
                 }
                 .tabItem {
                     Label("Insights", systemImage: "chart.pie.fill")

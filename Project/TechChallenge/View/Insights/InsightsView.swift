@@ -8,21 +8,12 @@
 import SwiftUI
 
 struct InsightsView: View {
-    let transactions: [TransactionModel] = ModelData.sampleTransactions
+    @ObservedObject var transactionItems: TransactionModelItem
     
     var body: some View {
         List {
-            ForEach(TransactionModel.Category.allCases) { category in
-                HStack {
-                    Text(category.rawValue)
-                        .font(.headline)
-                        .foregroundColor(category.color)
-                    Spacer()
-                    // TODO: calculate cummulative expense for each category
-                    Text("$0.0")
-                        .bold()
-                        .secondary()
-                }
+            ForEach(TransactionModel.Category.allCasesExceptAllCase) { category in
+                InsightsViewListCell(category: category, transactionItems: transactionItems)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -32,9 +23,28 @@ struct InsightsView: View {
 
 #if DEBUG
 struct InsightsView_Previews: PreviewProvider {
+    static let transactionsItem: TransactionModelItem = TransactionModelItem(transactions: ModelData.sampleTransactions)
+    
     static var previews: some View {
-        InsightsView()
+        InsightsView(transactionItems: transactionsItem)
             .previewLayout(.sizeThatFits)
     }
 }
 #endif
+
+struct InsightsViewListCell: View {
+    let category: TransactionModel.Category
+    @ObservedObject var transactionItems: TransactionModelItem
+    
+    var body: some View {
+        HStack {
+            Text(category.rawValue)
+                .font(.headline)
+                .foregroundColor(category.color)
+            Spacer()
+            Text(transactionItems.getTotalSpent(for: category).readableSum)
+                .bold()
+                .secondary()
+        }
+    }
+}

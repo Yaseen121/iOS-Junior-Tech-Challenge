@@ -9,9 +9,17 @@ import Foundation
 
 class TransactionModelItem: ObservableObject {
     @Published var transactions: [TransactionModel]
+    @Published var forceUpdateModel: Bool = false
     
     init(transactions: [TransactionModel]) {
         self.transactions = transactions
+    }
+    
+    func getTotalSpent(for category: TransactionModel.Category) -> Double {
+        let selectedTransactions = TransactionModel.filter(transactions: transactions, selectedCategory: category)
+        let pinned = selectedTransactions.filter{ $0.isPinned }
+        let amount = pinned.map{ $0.amount }.reduce(0, +)
+        return amount
     }
 }
 
@@ -28,6 +36,10 @@ class TransactionModel: ObservableObject {
         
         static var defaultCase: Category {
             return .all
+        }
+        
+        static var allCasesExceptAllCase: [Category] {
+            return Category.allCases.filter{ $0 != .all }
         }
     }
     
