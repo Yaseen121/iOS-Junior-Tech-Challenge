@@ -18,11 +18,21 @@ extension TransactionModel {
         
         return Image(uiImage: uiImage)
     }
+    
+    static func filter(transactions: [TransactionModel], selectedCategory: TransactionModel.Category) -> [TransactionModel] {
+        if selectedCategory == .all {
+            return  transactions
+        } else {
+            return transactions.filter{ $0.category == selectedCategory }
+        }
+    }
 }
 
 extension TransactionModel.Category {
     var color: Color {
         switch self {
+        case .all:
+            return .black
         case .food:
             return .green
         case .health:

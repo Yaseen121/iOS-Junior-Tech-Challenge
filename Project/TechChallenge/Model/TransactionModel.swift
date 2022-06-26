@@ -11,11 +11,16 @@ import Foundation
 
 struct TransactionModel {
     enum Category: String, CaseIterable {
+        case all
         case food
         case health
         case entertainment
         case shopping
         case travel
+        
+        static var defaultCase: Category {
+            return .all
+        }
     }
     
     enum Provider: String {
