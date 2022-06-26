@@ -70,11 +70,13 @@ struct TransactionListView: View {
 }
 
 #if DEBUG
-//struct TransactionListView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TransactionListView()
-//    }
-//}
+struct TransactionListView_Previews: PreviewProvider {
+    static let transactionsItem: TransactionModelItem = TransactionModelItem(transactions: ModelData.sampleTransactions)
+    
+    static var previews: some View {
+        TransactionListView(transactionItems: transactionsItem, transactions: .constant(transactionsItem.transactions))
+    }
+}
 #endif
 
 struct CategoryButtonView: View {

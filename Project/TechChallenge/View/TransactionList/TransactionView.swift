@@ -66,14 +66,17 @@ struct TransactionView: View {
 }
 
 #if DEBUG
-//struct TransactionView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VStack {
-//            TransactionView(transaction: ModelData.sampleTransactions[0]) {}
-//            TransactionView(transaction: ModelData.sampleTransactions[1]) {}
-//        }
-//        .padding()
-//        .previewLayout(.sizeThatFits)
-//    }
-//}
+struct TransactionView_Previews: PreviewProvider {
+    static let transactions: [TransactionModel] = ModelData.sampleTransactions
+    
+    static var previews: some View {
+        VStack {
+            ForEach(transactions) { transaction in
+                TransactionView(transaction: .constant(transaction), pressedAction: {})
+            }
+        }
+        .padding()
+        .previewLayout(.sizeThatFits)
+    }
+}
 #endif
