@@ -15,10 +15,16 @@ class TransactionModelItem: ObservableObject {
         self.transactions = transactions
     }
     
-    func getTotalSpent(for category: TransactionModel.Category) -> Double {
+    func getTotalSpent(for category: TransactionModel.Category, ignorePinned: Bool = false) -> Double {
         let selectedTransactions = TransactionModel.filter(transactions: transactions, selectedCategory: category)
-        let pinned = selectedTransactions.filter{ $0.isPinned }
-        let amount = pinned.map{ $0.amount }.reduce(0, +)
+        
+        guard ignorePinned else {
+            let pinned = selectedTransactions.filter{ $0.isPinned }
+            let amount = pinned.map{ $0.amount }.reduce(0, +)
+            return amount
+        }
+        
+        let amount = selectedTransactions.map{ $0.amount }.reduce(0, +)
         return amount
     }
 }
