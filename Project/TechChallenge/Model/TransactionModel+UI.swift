@@ -26,6 +26,14 @@ extension TransactionModel {
             return transactions.filter{ $0.category == selectedCategory }
         }
     }
+    
+    static func filter(transactions: [Binding<TransactionModel>], selectedCategory: TransactionModel.Category) -> [Binding<TransactionModel>] {
+        if selectedCategory == .all {
+            return  transactions
+        } else {
+            return transactions.filter{ $0.wrappedValue.category == selectedCategory }
+        }
+    }
 }
 
 extension TransactionModel.Category {

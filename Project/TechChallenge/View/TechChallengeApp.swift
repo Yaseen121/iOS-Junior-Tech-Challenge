@@ -9,12 +9,13 @@ import SwiftUI
 
 @main
 struct TechChallengeApp: App {
-
+    @ObservedObject var transactionsItem: TransactionModelItem = TransactionModelItem(transactions: ModelData.sampleTransactions)
+    
     var body: some Scene {
         WindowGroup {
             TabView {
                 NavigationView {
-                    TransactionListView()
+                    TransactionListView(transactions: $transactionsItem.transactions)
                 }
                 .tabItem {
                     Label("Transactions", systemImage: "list.bullet")

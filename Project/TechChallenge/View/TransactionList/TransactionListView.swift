@@ -8,23 +8,25 @@
 import SwiftUI
 
 struct TransactionListView: View {
-    let transactions: [TransactionModel] = ModelData.sampleTransactions
+    @Binding var transactions: [TransactionModel]
     let categories: [TransactionModel.Category] = TransactionModel.Category.allCases
     @State var selectedCategory: TransactionModel.Category = .defaultCase
-    @State var selectedTotal: Double = setSelectedTotal()
+    @State var pinnedTotal: Double = setPinnedTotal()
     
-    static func setSelectedTotal() -> Double {
-        let transactions = ModelData.sampleTransactions
-        let amounts = transactions.map{ $0.amount }
+    static func setPinnedTotal() -> Double {
+        let transactions = TransactionModel.filter(transactions: ModelData.sampleTransactions, selectedCategory: .defaultCase)
+        let pinned = transactions.filter{ $0.isPinned }
+        let amounts = pinned.map{ $0.amount }
         let total = amounts.reduce(0, +)
         return total
     }
     
-    func updateSelectedTotal() {
+    func updatePinnedTotal() {
         let filteredTransactions = TransactionModel.filter(transactions: transactions, selectedCategory: selectedCategory)
-        let amounts = filteredTransactions.map{ $0.amount }
+        let pinned = filteredTransactions.filter{ $0.isPinned }
+        let amounts = pinned.map{ $0.amount }
         let total = amounts.reduce(0, +)
-        selectedTotal = total
+        pinnedTotal = total
     }
     
     var body: some View {
@@ -34,21 +36,31 @@ struct TransactionListView: View {
                     ForEach(categories) { category in
                         CategoryButtonView(name: category.rawValue, colour: category.color, action: {
                             selectedCategory = category
-                            updateSelectedTotal()
+                            updatePinnedTotal()
                         })
                     }
                 }.padding()
             }.background(Color.accentColor.opacity(0.8))
             
             List {
-                ForEach(TransactionModel.filter(transactions: transactions, selectedCategory: selectedCategory)) { transaction in
-                    TransactionView(transaction: transaction)
+                if selectedCategory == .all {
+                    ForEach($transactions) { transaction in
+                        TransactionView(transaction: transaction) {
+                            updatePinnedTotal()
+                        }
+                    }
+                } else {
+                    ForEach($transactions.filter{ $0.wrappedValue.category == selectedCategory }) { transaction in
+                        TransactionView(transaction: transaction) {
+                            updatePinnedTotal()
+                        }
+                    }
                 }
             }
             .animation(.easeIn)
             .listStyle(PlainListStyle())
             
-            SummaryView(selectedCategory: $selectedCategory, total: $selectedTotal)
+            SummaryView(selectedCategory: $selectedCategory, total: $pinnedTotal)
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Transactions")
@@ -56,11 +68,11 @@ struct TransactionListView: View {
 }
 
 #if DEBUG
-struct TransactionListView_Previews: PreviewProvider {
-    static var previews: some View {
-        TransactionListView()
-    }
-}
+//struct TransactionListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TransactionListView()
+//    }
+//}
 #endif
 
 struct CategoryButtonView: View {
