@@ -66,7 +66,7 @@ struct TransactionView: View {
 }
 
 #if DEBUG
-struct TransactionView_Previews: PreviewProvider {
+//struct TransactionView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        VStack {
 //            TransactionView(transaction: ModelData.sampleTransactions[0]) {}
